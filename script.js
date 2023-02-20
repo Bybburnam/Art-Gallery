@@ -1,47 +1,31 @@
 let artArray = [];
 let body = document.querySelector("body");
 
-function getFetch() {
-  const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects`;
-
-  fetch(url)
-    .then((res) => res.json()) // parse response as JSON
+async function getArtPiece(url) {
+  return fetch(url)
+    .then((res) => res.json())
     .then((data) => {
-      console.log(data);
-
-      for (let i = 10000; i < 10070; i++) {
-        let url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${i}`;
-        let obj = fetch(url);
-        obj = obj.then((res) => res.json());
-        obj = obj
-          .then((data) => {
-            if (
-              data.title &&
-              data.artistDisplayName &&
-              data.primaryImageSmall
-            ) {
-              console.log(data);
-              artArray.push(
-                new ArtPiece(
-                  data.title,
-                  data.artistDisplayName,
-                  data.primaryImageSmall
-                )
-              );
-            }
-            displayArt(artArray);
-          })
-          .catch((err) => {
-            console.log(`error ${err}`);
-          });
-      }
+      return data;
     })
     .catch((err) => {
       console.log(`error ${err}`);
     });
 }
 
-getFetch();
+async function getArtGallery() {
+  for (let i = 10000; i < 10700; i += 10) {
+    let url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${i}`;
+    const data = await getArtPiece(url);
+    console.log(data);
+    if (data.title && data.artistDisplayName && data.primaryImageSmall) {
+      artArray.push(
+        new ArtPiece(data.title, data.artistDisplayName, data.primaryImageSmall)
+      );
+    }
+  }
+  displayArt(artArray);
+}
+getArtGallery();
 
 class ArtPiece {
   #title;
