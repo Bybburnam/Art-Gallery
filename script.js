@@ -25,6 +25,7 @@ async function getArtGallery() {
   }
   displayArt(artArray);
 }
+
 getArtGallery();
 
 class ArtPiece {
