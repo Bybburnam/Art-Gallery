@@ -21,6 +21,7 @@ body {
 .artPiece {
   width: 200px;
   height: auto;
+  border: 2px solid black;
 }
 
 .card {
