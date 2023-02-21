@@ -32,11 +32,8 @@ async function getArtGallery() {
     }
   }
 }
-try {
-  getArtGallery();
-} catch {
-  console.log("big error");
-}
+
+getArtGallery();
 
 class ArtPiece {
   #title;
