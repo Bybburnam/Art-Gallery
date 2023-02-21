@@ -2,31 +2,41 @@ let artArray = [];
 let body = document.querySelector("body");
 
 async function getArtPiece(url) {
-  return fetch(url)
-    .then((res) => res.json())
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`error ${err}`);
-    });
+  try {
+    let res = await fetch(url);
+    let data = await res.json();
+    return data;
+  } catch (e) {
+    console.log(`Error retrieving art piece.`);
+  }
 }
 
 async function getArtGallery() {
+  //API limit of 80 requests/second so making 70 requests to be safe.
   for (let i = 10000; i < 10700; i += 10) {
     let url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${i}`;
-    const data = await getArtPiece(url);
-    console.log(data);
-    if (data.title && data.artistDisplayName && data.primaryImageSmall) {
-      artArray.push(
-        new ArtPiece(data.title, data.artistDisplayName, data.primaryImageSmall)
-      );
+    try {
+      let data = await getArtPiece(url);
+      if (data.title && data.artistDisplayName && data.primaryImageSmall) {
+        artArray.push(
+          new ArtPiece(
+            data.title,
+            data.artistDisplayName,
+            data.primaryImageSmall
+          )
+        );
+      }
+      displayArt(artArray);
+    } catch {
+      console.log("Error loading art gallery");
     }
   }
-  displayArt(artArray);
 }
-
-getArtGallery();
+try {
+  getArtGallery();
+} catch {
+  console.log("big error");
+}
 
 class ArtPiece {
   #title;
@@ -59,7 +69,7 @@ function displayArt(arr) {
 }
 
 function createCard(artPiece) {
-  let span = document.createElement("section");
+  let section = document.createElement("section");
   let img = document.createElement("img");
   img.src = artPiece.getArt();
   img.classList.add("artPiece");
@@ -67,9 +77,9 @@ function createCard(artPiece) {
   pieceTitle.textContent = artPiece.getTitle();
   let artistName = document.createElement("p");
   artistName.textContent = artPiece.getArtist();
-  span.appendChild(img);
-  span.appendChild(pieceTitle);
-  span.appendChild(artistName);
-  span.classList.add("card");
-  return span;
+  section.appendChild(img);
+  section.appendChild(pieceTitle);
+  section.appendChild(artistName);
+  section.classList.add("card");
+  return section;
 }
