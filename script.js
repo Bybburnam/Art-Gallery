@@ -13,9 +13,10 @@ async function getArtPiece(url) {
 
 async function getArtGallery() {
   //API limit of 80 requests/second so making 70 requests to be safe.
-  for (let i = 10000; i < 10700; i += 10) {
-    let url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${i}`;
-    try {
+  try {
+    for (let i = 10000; i < 10700; i += 10) {
+      let url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${i}`;
+
       let data = await getArtPiece(url);
       if (data.title && data.artistDisplayName && data.primaryImageSmall) {
         artArray.push(
@@ -26,10 +27,10 @@ async function getArtGallery() {
           )
         );
       }
-      displayArt(artArray);
-    } catch {
-      console.log("Error loading art gallery");
     }
+    displayArt(artArray);
+  } catch {
+    console.log("Error loading art gallery.");
   }
 }
 
